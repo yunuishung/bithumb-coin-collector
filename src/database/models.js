@@ -37,13 +37,14 @@ class PriceDataModel {
   static async getLatest(symbol, limit = 10) {
     const connection = await getConnection();
     try {
+      const limitValue = parseInt(limit) || 10;
       const query = `
         SELECT * FROM price_data 
         WHERE symbol = ? 
         ORDER BY collected_at DESC 
-        LIMIT ?
+        LIMIT ${limitValue}
       `;
-      const [rows] = await connection.execute(query, [symbol, limit]);
+      const [rows] = await connection.execute(query, [symbol]);
       return rows;
     } finally {
       connection.release();
@@ -93,12 +94,13 @@ class CollectionLogModel {
   static async getRecentLogs(limit = 100) {
     const connection = await getConnection();
     try {
+      const limitValue = parseInt(limit) || 100;
       const query = `
         SELECT * FROM collection_logs 
         ORDER BY collected_at DESC 
-        LIMIT ?
+        LIMIT ${limitValue}
       `;
-      const [rows] = await connection.execute(query, [limit]);
+      const [rows] = await connection.execute(query);
       return rows;
     } finally {
       connection.release();
@@ -108,6 +110,7 @@ class CollectionLogModel {
   static async getErrorLogs(symbol = null, limit = 50) {
     const connection = await getConnection();
     try {
+      const limitValue = parseInt(limit) || 50;
       let query = `
         SELECT * FROM collection_logs 
         WHERE status = 'error'
@@ -119,8 +122,7 @@ class CollectionLogModel {
         values.push(symbol);
       }
       
-      query += ' ORDER BY collected_at DESC LIMIT ?';
-      values.push(limit);
+      query += ` ORDER BY collected_at DESC LIMIT ${limitValue}`;
 
       const [rows] = await connection.execute(query, values);
       return rows;
