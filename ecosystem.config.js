@@ -2,7 +2,7 @@ module.exports = {
   apps: [{
     name: 'coin-collector',
     script: 'src/index.js',
-    args: 'collect --daemon',
+    args: 'collect --daemon -s BTC,ETH,XRP,ADA,DOT -i 60000',
     instances: 1,
     autorestart: true,
     watch: false,
